@@ -8,18 +8,26 @@ body,
   height: 100%;
   /* Use the dynamic viewport so mobile browser chrome doesn't clip content. */
   min-height: 100dvh;
+  /* Kill rubber-band / pull-to-refresh / bounce overscroll everywhere. */
+  overscroll-behavior: none;
 }
 
 body {
   margin: 0;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  overscroll-behavior-y: none;
   /* Prevent the whole page from rubber-banding / pull-to-refresh on mobile. */
   overflow-x: hidden;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
+}
+
+/* Nested scroll areas shouldn't chain their overscroll to the page. */
+* {
+  overscroll-behavior: none;
 }
 
 /* Respect notches / home indicator on iOS and Android. */
