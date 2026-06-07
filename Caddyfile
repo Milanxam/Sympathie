@@ -1,0 +1,27 @@
+# Caddy terminates TLS so browsers can use wss:// (secure WebSockets). Caddy
+# automatically obtains and renews Let's Encrypt certificates and transparently
+# proxies WebSocket upgrades — no extra config needed for /ws.
+#
+# Replace kindred.example.com with your real domain (it must point at this host)
+# then run:  caddy run --config ./Caddyfile
+#
+# The Go server is the single source of truth and serves the API, websocket,
+# uploaded images, and the built frontend, so one reverse_proxy covers it all.
+
+kindred.example.com {
+	encode zstd gzip
+
+	# Cache uploaded images aggressively; their URLs are content-addressed.
+	@uploads path /uploads/*
+	header @uploads Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy localhost:8080
+}
+
+# ----- Local HTTPS testing (optional) --------------------------------------
+# Uncomment to serve a locally-trusted cert at https://localhost so you can
+# exercise wss:// without a public domain:
+#
+# localhost {
+# 	reverse_proxy localhost:8080
+# }

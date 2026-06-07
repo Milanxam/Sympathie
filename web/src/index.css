@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  /* Use the dynamic viewport so mobile browser chrome doesn't clip content. */
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  /* Prevent the whole page from rubber-banding / pull-to-refresh on mobile. */
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+/* Respect notches / home indicator on iOS and Android. */
+.safe-top {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+}
+.safe-bottom {
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+}
+
+/* Non-text UI shouldn't be selectable or show the iOS callout. */
+button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Inputs keep a 16px font so iOS never zooms in on focus. */
+input,
+textarea {
+  font-size: 16px;
+}

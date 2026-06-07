@@ -1,0 +1,19 @@
+# Node / frontend
+web/node_modules/
+web/dist/
+
+# Go
+server/kindred
+*.exe
+*.exe~
+*~
+
+# Runtime uploads (user-generated images)
+server/uploads/
+uploads/
+
+# Editor / OS
+.DS_Store
+*.log
+.env
+.env.local
