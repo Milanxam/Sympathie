@@ -25,16 +25,68 @@ import (
 //   room state into Redis with Pub/Sub. Do NOT build that now.
 // ---------------------------------------------------------------------------
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	// TODO: restrict this to your front-end origin in production.
-	CheckOrigin: func(r *http.Request) bool { return true },
+func allowedOrigins() []string {
+	raw := strings.TrimSpace(os.Getenv("ALLOWED_ORIGINS"))
+	if raw == "" {
+		return nil
+	}
+	var out []string
+	for _, part := range strings.Split(raw, ",") {
+		if o := strings.TrimSpace(part); o != "" {
+			out = append(out, o)
+		}
+	}
+	return out
+}
+
+func originAllowed(origin string, allowed []string) bool {
+	if origin == "" {
+		return true
+	}
+	if len(allowed) == 0 {
+		return true
+	}
+	for _, o := range allowed {
+		if o == "*" || strings.EqualFold(o, origin) {
+			return true
+		}
+	}
+	return false
+}
+
+func newUpgrader(allowed []string) websocket.Upgrader {
+	return websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return originAllowed(r.Header.Get("Origin"), allowed)
+		},
+	}
+}
+
+func withCORS(allowed []string, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if origin != "" && originAllowed(origin, allowed) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Vary", "Origin")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		}
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next(w, r)
+	}
 }
 
 const uploadsDir = "./uploads"
 
 func main() {
+	allowed := allowedOrigins()
+	upgrader := newUpgrader(allowed)
+
 	hub := NewHub()
 	go hub.Run()
 
@@ -72,7 +124,7 @@ func main() {
 	// Accepts a multipart image and saves it to ./uploads/<randID>.<ext>.
 	// Returns JSON {"url":"/uploads/<file>"}. Images travel as URLs, never as
 	// base64 over the websocket.
-	http.HandleFunc("/upload", handleUpload)
+	http.HandleFunc("/upload", withCORS(allowed, handleUpload))
 
 	// Serve uploaded images statically.
 	if err := os.MkdirAll(uploadsDir, 0o755); err != nil {
@@ -93,7 +145,11 @@ func main() {
 	// instead run Vite separately and point it at ws://localhost:8080/ws.
 	http.Handle("/", spaHandler("./static"))
 
-	addr := ":8080"
+	port := strings.TrimSpace(os.Getenv("PORT"))
+	if port == "" {
+		port = "8080"
+	}
+	addr := ":" + port
 	log.Println("Kindred server listening on", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }

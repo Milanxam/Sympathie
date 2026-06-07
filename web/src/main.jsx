@@ -1,6 +1,9 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import { applyTheme } from "./theme.js";
 import "./index.css";
+
+applyTheme();
 
 // NOTE: We intentionally do NOT wrap in <React.StrictMode>. In dev, StrictMode
 // double-invokes effects (mount → unmount → mount), which opens a throwaway

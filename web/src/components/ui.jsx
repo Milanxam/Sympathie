@@ -3,14 +3,24 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { resolveSrc } from "../net.js";
 
+// Shared input styling — always uses CSS theme variables.
+export const inputClass =
+  "w-full rounded-2xl bg-surface-muted px-4 py-4 text-lg font-semibold text-primary outline-none ring-1 ring-border placeholder:text-faint focus:ring-2 focus:ring-[var(--color-accent)]";
+
 // ---- Screen scaffold -------------------------------------------------------
 
-export function Screen({ children }) {
+/** Full-height screen. Pass `footer` for a sticky bottom bar (mobile CTAs). */
+export function Screen({ children, footer }) {
   return (
-    <div className="min-h-dvh bg-slate-950 text-slate-100">
-      <div className="safe-top safe-bottom mx-auto flex min-h-dvh w-full max-w-md flex-col px-5">
+    <div className="flex min-h-dvh flex-col bg-page text-primary">
+      <div className="safe-top mx-auto flex w-full max-w-md flex-1 flex-col px-4 min-h-0">
         {children}
       </div>
+      {footer && (
+        <div className="safe-bottom sticky bottom-0 z-10 border-t border-theme bg-page px-4 py-3 shadow-theme">
+          <div className="mx-auto w-full max-w-md">{footer}</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -18,14 +28,16 @@ export function Screen({ children }) {
 export function Brand({ small }) {
   return (
     <div className="flex items-center justify-center gap-2">
-      <span className={small ? "text-2xl" : "text-4xl"}>🤝</span>
+      <span className={small ? "text-2xl" : "text-5xl"} aria-hidden>
+        🤝
+      </span>
       <h1
         className={
           (small ? "text-2xl" : "text-4xl") +
-          " font-black tracking-tight bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent"
+          " font-black tracking-tight text-accent"
         }
       >
-        Kindred
+        Sympathie
       </h1>
     </div>
   );
@@ -40,14 +52,15 @@ export function Button({
   ...props
 }) {
   const base =
-    "inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-4 text-base font-bold transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40";
+    "inline-flex w-full min-h-14 items-center justify-center gap-2 rounded-2xl px-5 py-4 text-base font-bold transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40";
   const variants = {
     primary:
-      "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-900/40 hover:from-violet-400 hover:to-fuchsia-400",
+      "bg-accent text-on-accent shadow-md hover:bg-[var(--color-accent-hover)]",
     secondary:
-      "bg-slate-800 text-slate-100 ring-1 ring-slate-700 hover:bg-slate-700",
-    ghost: "bg-transparent text-slate-300 hover:bg-slate-800",
-    danger: "bg-rose-600 text-white hover:bg-rose-500",
+      "bg-surface-muted text-primary ring-1 ring-border hover:bg-[var(--color-border)]",
+    ghost: "bg-transparent text-soft hover:bg-surface-muted",
+    danger:
+      "bg-[var(--color-danger)] text-on-dark hover:opacity-90",
   };
   return (
     <button className={`${base} ${variants[variant]} ${className}`} {...props}>
@@ -58,16 +71,7 @@ export function Button({
 
 // ---- Player avatar ---------------------------------------------------------
 
-const AVATAR_COLORS = [
-  "bg-rose-500",
-  "bg-amber-500",
-  "bg-emerald-500",
-  "bg-sky-500",
-  "bg-violet-500",
-  "bg-fuchsia-500",
-  "bg-teal-500",
-  "bg-orange-500",
-];
+const AVATAR_COUNT = 8;
 
 function hashString(s) {
   let h = 0;
@@ -78,9 +82,9 @@ function hashString(s) {
 }
 
 export function Avatar({ name, id, size = "md" }) {
-  const color = AVATAR_COLORS[hashString(id || name || "?") % AVATAR_COLORS.length];
+  const color = `var(--color-avatar-${hashString(id || name || "?") % AVATAR_COUNT})`;
   const sizes = {
-    sm: "h-8 w-8 text-xs",
+    sm: "h-9 w-9 text-xs",
     md: "h-10 w-10 text-sm",
     lg: "h-12 w-12 text-base",
   };
@@ -92,7 +96,8 @@ export function Avatar({ name, id, size = "md" }) {
     .join("");
   return (
     <div
-      className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white ${color} ${sizes[size]}`}
+      style={{ backgroundColor: color }}
+      className={`flex shrink-0 items-center justify-center rounded-full font-bold text-on-dark ${sizes[size]}`}
     >
       {initials || "?"}
     </div>
@@ -101,12 +106,10 @@ export function Avatar({ name, id, size = "md" }) {
 
 // ---- Card faces ------------------------------------------------------------
 
-// CardFace renders an emoji or image card. `compact` shrinks it for lists.
-// When `onZoom` is passed, the media becomes a button that opens the lightbox.
 export function CardFace({ card, rank, compact, onZoom }) {
   if (!card) {
     return (
-      <div className="flex items-center justify-center rounded-xl bg-slate-800 p-3 text-slate-500">
+      <div className="flex items-center justify-center rounded-xl bg-surface-muted p-3 text-faint">
         ?
       </div>
     );
@@ -118,7 +121,7 @@ export function CardFace({ card, rank, compact, onZoom }) {
         alt={card.label || ""}
         className={
           (compact ? "h-10 w-10" : "h-14 w-14") +
-          " shrink-0 rounded-xl object-cover ring-1 ring-slate-700"
+          " shrink-0 rounded-xl object-cover ring-1 ring-border"
         }
       />
     ) : (
@@ -127,7 +130,7 @@ export function CardFace({ card, rank, compact, onZoom }) {
   return (
     <div className="flex items-center gap-3">
       {rank != null && (
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-slate-200">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-on-accent">
           {rank}
         </span>
       )}
@@ -146,7 +149,7 @@ export function CardFace({ card, rank, compact, onZoom }) {
         media
       )}
       {card.label && (
-        <span className="truncate text-base font-semibold text-slate-100">
+        <span className="truncate text-base font-semibold text-primary">
           {card.label}
         </span>
       )}
@@ -157,9 +160,6 @@ export function CardFace({ card, rank, compact, onZoom }) {
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
-// ZoomableImage supports pinch-to-zoom (two fingers) and drag-to-pan (one
-// finger while zoomed). Double-tap resets. Built on pointer events so it works
-// on touch and trackpad without enabling page-wide zoom.
 function ZoomableImage({ src, alt }) {
   const [t, setT] = useState({ scale: 1, x: 0, y: 0 });
   const pointers = useRef(new Map());
@@ -244,8 +244,6 @@ function ZoomableImage({ src, alt }) {
   );
 }
 
-// Lightbox shows a single card enlarged. Render it once per screen and pass the
-// currently-enlarged card (or null) plus an onClose handler.
 export function Lightbox({ card, onClose }) {
   return (
     <AnimatePresence>
@@ -255,28 +253,28 @@ export function Lightbox({ card, onClose }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-5"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-overlay p-5"
         >
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900"
+            className="absolute right-4 top-4 flex min-h-11 items-center gap-1 rounded-full bg-page px-4 py-2 text-sm font-bold text-primary"
           >
-            <X className="h-5 w-5" /> Close
+            <X className="h-5 w-5" /> Schließen
           </button>
           <motion.div
             initial={{ scale: 0.85 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.85 }}
             onClick={(e) => e.stopPropagation()}
-            className="flex w-full max-w-sm items-center justify-center overflow-hidden rounded-3xl bg-slate-800"
+            className="flex w-full max-w-sm items-center justify-center overflow-hidden rounded-3xl bg-surface-muted"
           >
             {card.type === "image" ? (
               <ZoomableImage src={resolveSrc(card.src)} alt={card.label || ""} />
             ) : (
-              <div className="flex aspect-square w-full flex-col items-center justify-center gap-4">
+              <div className="flex aspect-square w-full flex-col items-center justify-center gap-4 bg-surface-muted">
                 <span className="text-8xl">{card.emoji}</span>
                 {card.label && (
-                  <span className="text-2xl font-bold text-white">
+                  <span className="text-2xl font-bold text-primary">
                     {card.label}
                   </span>
                 )}
@@ -284,12 +282,14 @@ export function Lightbox({ card, onClose }) {
             )}
           </motion.div>
           {card.label && card.type === "image" && (
-            <p className="mt-3 text-base font-semibold text-white">{card.label}</p>
+            <p className="mt-3 text-base font-semibold text-on-dark">
+              {card.label}
+            </p>
           )}
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-on-dark opacity-80">
             {card.type === "image"
-              ? "Pinch to zoom · double-tap to reset · tap outside to close"
-              : "Tap anywhere to close"}
+              ? "Zum Zoomen ziehen · Doppeltippen zum Zurücksetzen · außen tippen zum Schließen"
+              : "Irgendwo tippen zum Schließen"}
           </p>
         </motion.div>
       )}
@@ -301,10 +301,12 @@ export function Lightbox({ card, onClose }) {
 
 export function Pill({ children, tone = "slate" }) {
   const tones = {
-    slate: "bg-slate-800 text-slate-300 ring-slate-700",
-    green: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
-    violet: "bg-violet-500/15 text-violet-300 ring-violet-500/30",
-    amber: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
+    slate: "bg-surface-muted text-soft ring-border",
+    green: "bg-[color-mix(in_srgb,var(--color-success)_15%,transparent)] text-success ring-[color-mix(in_srgb,var(--color-success)_30%,transparent)]",
+    violet:
+      "bg-[color-mix(in_srgb,var(--color-accent)_15%,transparent)] text-accent ring-[color-mix(in_srgb,var(--color-accent)_30%,transparent)]",
+    amber:
+      "bg-[color-mix(in_srgb,var(--color-warning)_15%,transparent)] text-[var(--color-warning)] ring-[color-mix(in_srgb,var(--color-warning)_30%,transparent)]",
   };
   return (
     <span
@@ -318,12 +320,12 @@ export function Pill({ children, tone = "slate" }) {
 export function ConnectionBadge({ status }) {
   if (status === "open") return null;
   const labels = {
-    connecting: "Connecting…",
-    reconnecting: "Reconnecting…",
-    closed: "Disconnected",
+    connecting: "Verbinde…",
+    reconnecting: "Verbinde neu…",
+    closed: "Getrennt",
   };
   return (
-    <div className="fixed inset-x-0 top-0 z-50 bg-amber-500 py-1 text-center text-xs font-bold text-amber-950">
+    <div className="fixed inset-x-0 top-0 z-50 bg-accent py-1.5 text-center text-xs font-bold text-on-accent">
       {labels[status] || status}
     </div>
   );

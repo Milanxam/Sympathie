@@ -19,7 +19,7 @@ export default function Game({ code, name, onLeave }) {
         <Screen>
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <Brand />
-            <p className="animate-pulse text-slate-400">Joining room {code}…</p>
+            <p className="animate-pulse text-muted">Trete Raum {code} bei…</p>
           </div>
         </Screen>
       </>

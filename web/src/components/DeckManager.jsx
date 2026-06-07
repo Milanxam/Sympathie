@@ -62,7 +62,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
     if (cards.length === 0) return;
     const deck = {
       id: newId("deck"),
-      name: `Photo deck ${decksRef.current.length + 1}`,
+      name: `Foto-Deck ${decksRef.current.length + 1}`,
       cards,
     };
     const next = [...decksRef.current, deck];
@@ -142,26 +142,26 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
   if (editing) {
     const isPhoto = editing.cards.every((c) => c.type === "image") || editing.cards.length === 0;
     return (
-      <div className="rounded-2xl bg-slate-900 p-4 ring-1 ring-slate-800">
+      <div className="rounded-2xl bg-surface p-4 ring-1 ring-border">
         <button
           onClick={() => setEditingId(null)}
-          className="mb-3 flex items-center gap-1 text-sm font-semibold text-slate-300"
+          className="mb-3 flex items-center gap-1 text-sm font-semibold text-soft"
         >
-          <ArrowLeft className="h-4 w-4" /> Done
+          <ArrowLeft className="h-4 w-4" /> Fertig
         </button>
         <input
           value={editing.name}
           onChange={(e) => renameDeck(editing.id, e.target.value)}
-          className="mb-3 w-full rounded-xl bg-slate-800 px-3 py-2 text-lg font-bold text-white outline-none ring-1 ring-slate-700 focus:ring-2 focus:ring-violet-500"
+          className="mb-3 w-full rounded-xl bg-surface-muted px-3 py-2 text-lg font-bold text-primary outline-none ring-1 ring-border focus:ring-2 focus:ring-[var(--color-accent)]"
         />
 
         {isPhoto && (
           <>
             <button
               onClick={() => fileRef.current?.click()}
-              className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 py-2.5 font-bold text-white"
+              className="mb-3 flex w-full min-h-11 items-center justify-center gap-2 rounded-xl bg-accent py-2.5 font-bold text-on-accent"
             >
-              <Camera className="h-5 w-5" /> Add photos
+              <Camera className="h-5 w-5" /> Fotos hinzufügen
             </button>
             <input
               ref={fileRef}
@@ -175,17 +175,17 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
               }}
             />
             {uploading && (
-              <div className="mb-3 rounded-xl bg-slate-800 px-4 py-2.5 text-center text-sm font-semibold text-slate-200 ring-1 ring-slate-700">
-                Uploading photos… {uploading.done}/{uploading.total}
+              <div className="mb-3 rounded-xl bg-surface-muted px-4 py-2.5 text-center text-sm font-semibold text-primary ring-1 ring-border">
+                Fotos werden hochgeladen… {uploading.done}/{uploading.total}
               </div>
             )}
           </>
         )}
 
-        <p className="mb-2 text-xs font-semibold text-slate-400">
-          {editing.cards.length} cards{" "}
+        <p className="mb-2 text-xs font-semibold text-muted">
+          {editing.cards.length} Karten{" "}
           {editing.cards.length < 5 && (
-            <span className="text-amber-400">· need 5+ to play</span>
+            <span className="text-[var(--color-warning)]">· mind. 5 zum Spielen</span>
           )}
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -194,7 +194,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
               <button
                 type="button"
                 onClick={() => onZoom?.(c)}
-                className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-slate-800 ring-1 ring-slate-700"
+                className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted ring-1 ring-border"
               >
                 {c.type === "image" ? (
                   <img
@@ -208,7 +208,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
               </button>
               <button
                 onClick={() => removeCard(editing.id, c.id)}
-                className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-white shadow"
+                className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-danger)] text-on-dark shadow"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -216,16 +216,16 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
                 <input
                   value={c.label || ""}
                   onChange={(e) => setCardLabel(editing.id, c.id, e.target.value)}
-                  placeholder="Label"
-                  className="mt-1 w-full rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-100 outline-none ring-1 ring-slate-700"
+                  placeholder="Bezeichnung"
+                  className="mt-1 w-full rounded-md bg-surface-muted px-2 py-1 text-xs text-primary outline-none ring-1 ring-border"
                 />
               )}
             </div>
           ))}
         </div>
         {editing.cards.length === 0 && (
-          <p className="mt-4 text-center text-sm text-slate-500">
-            No cards yet — add some photos.
+          <p className="mt-4 text-center text-sm text-faint">
+            Noch keine Karten – füge Fotos hinzu.
           </p>
         )}
       </div>
@@ -235,11 +235,11 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
   // ---- List view ----------------------------------------------------------
   const usedPresetIds = new Set(decks.map((d) => d.name));
   return (
-    <div className="rounded-2xl bg-slate-900 p-4 ring-1 ring-slate-800">
-      <div className="mb-3 flex items-center gap-2 text-slate-200">
+    <div className="rounded-2xl bg-surface p-4 ring-1 ring-border">
+      <div className="mb-3 flex items-center gap-2 text-primary">
         <ImageIcon className="h-5 w-5" />
         <h2 className="text-base font-bold">Decks</h2>
-        <span className="text-xs text-slate-500">tap to set the active deck</span>
+        <span className="text-xs text-faint">tippen für aktives Deck</span>
       </div>
 
       <ul className="flex flex-col gap-2">
@@ -250,29 +250,29 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
               key={d.id}
               onClick={() => commit(decks, d.id)}
               className={`cursor-pointer rounded-xl p-3 ring-1 ${
-                active
-                  ? "bg-violet-500/20 ring-violet-400"
-                  : "bg-slate-800 ring-slate-700"
+                    active
+                  ? "bg-[color-mix(in_srgb,var(--color-accent)_20%,transparent)] ring-[var(--color-accent)]"
+                  : "bg-surface-muted ring-border"
               }`}
             >
               <div className="flex items-center gap-2">
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-full ${
-                    active ? "bg-violet-400 text-slate-900" : "ring-1 ring-slate-600"
+                    active ? "bg-accent text-on-accent" : "ring-1 ring-border"
                   }`}
                 >
                   {active && <Check className="h-3.5 w-3.5" />}
                 </span>
-                <span className="flex-1 truncate font-semibold text-white">
+                <span className="flex-1 truncate font-semibold text-primary">
                   {d.name}
                 </span>
-                <span className="text-xs text-slate-400">{d.cards.length}</span>
+                <span className="text-xs text-muted">{d.cards.length}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setEditingId(d.id);
                   }}
-                  className="rounded-lg p-1.5 text-slate-300 hover:bg-slate-700"
+                  className="rounded-lg p-1.5 text-soft hover:bg-surface-muted"
                 >
                   <Pencil className="h-4 w-4" />
                 </button>
@@ -282,7 +282,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
                       e.stopPropagation();
                       deleteDeck(d.id);
                     }}
-                    className="rounded-lg p-1.5 text-rose-400 hover:bg-slate-700"
+                    className="rounded-lg p-1.5 text-[var(--color-danger)] hover:bg-surface-muted"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -293,7 +293,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
                   {d.cards.slice(0, 7).map((c) => (
                     <span
                       key={c.id}
-                      className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-slate-900 ring-1 ring-slate-700"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-page ring-1 ring-border"
                     >
                       {c.type === "image" ? (
                         <img
@@ -309,7 +309,7 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
                 </div>
               )}
               {d.cards.length < 5 && (
-                <p className="mt-2 text-xs text-amber-400">Needs 5+ cards to play</p>
+                <p className="mt-2 text-xs text-[var(--color-warning)]">Mind. 5 Karten zum Spielen</p>
               )}
             </li>
           );
@@ -319,18 +319,18 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
       <div className="mt-3 flex flex-col gap-2">
         <button
           onClick={() => setShowAddEmoji((v) => !v)}
-          className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 py-2.5 text-sm font-bold text-slate-200 ring-1 ring-slate-700"
+          className="flex items-center justify-center gap-2 rounded-xl bg-surface-muted py-2.5 text-sm font-bold text-primary ring-1 ring-border"
         >
-          <Plus className="h-4 w-4" /> Add emoji deck
+          <Plus className="h-4 w-4" /> Emoji-Deck hinzufügen
         </button>
         {showAddEmoji && (
-          <div className="flex flex-wrap gap-2 rounded-xl bg-slate-800 p-2 ring-1 ring-slate-700">
+          <div className="flex flex-wrap gap-2 rounded-xl bg-surface-muted p-2 ring-1 ring-border">
             {EMOJI_DECKS.map((preset) => (
               <button
                 key={preset.id}
                 onClick={() => addEmojiDeck(preset)}
                 disabled={usedPresetIds.has(preset.name)}
-                className="rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-200 disabled:opacity-40"
+                className="rounded-full bg-surface-muted px-3 py-1.5 text-xs font-semibold text-primary ring-1 ring-border disabled:opacity-40"
               >
                 {preset.name}
               </button>
@@ -340,9 +340,9 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
         <button
           onClick={() => newDeckFileRef.current?.click()}
           disabled={!!uploading}
-          className="flex items-center justify-center gap-2 rounded-xl bg-indigo-500 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+          className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-bold text-on-accent disabled:opacity-50"
         >
-          <Camera className="h-4 w-4" /> Photo deck from camera roll
+          <Camera className="h-4 w-4" /> Foto-Deck aus Galerie
         </button>
         <input
           ref={newDeckFileRef}
@@ -358,8 +358,8 @@ export default function DeckManager({ decks, activeDeckId, onChange, onZoom }) {
       </div>
 
       {uploading && (
-        <div className="mt-3 rounded-xl bg-slate-800 px-4 py-3 text-center text-sm font-semibold text-slate-200 ring-1 ring-slate-700">
-          Uploading photos… {uploading.done}/{uploading.total}
+        <div className="mt-3 rounded-xl bg-surface-muted px-4 py-3 text-center text-sm font-semibold text-primary ring-1 ring-border">
+          Fotos werden hochgeladen… {uploading.done}/{uploading.total}
         </div>
       )}
     </div>

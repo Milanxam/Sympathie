@@ -2,7 +2,7 @@ import { useState } from "react";
 import Home from "./screens/Home.jsx";
 import Game from "./Game.jsx";
 
-const STORAGE_KEY = "kindred.session";
+const STORAGE_KEY = "sympathie.session";
 
 function loadSession() {
   try {

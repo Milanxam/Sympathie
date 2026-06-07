@@ -2,32 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fallback earthy palette before JS runs (must match theme.js `earthy`). */
+:root {
+  --color-bg: #fef9e1;
+  --color-surface: #faedcd;
+  --color-surface-muted: #e9edca;
+  --color-border: #cdd5ae;
+  --color-text: #43382c;
+  --color-text-soft: #5e5040;
+  --color-text-muted: #8a7c68;
+  --color-text-faint: #9c8d77;
+  --color-accent: #d3a373;
+  --color-accent-hover: #a9764a;
+  --color-accent-text: #a9764a;
+  --color-accent-soft: #cdab84;
+  --color-accent-dark: #8a6f47;
+  --color-olive: #7f8a4f;
+  --color-success: #6f8f4f;
+  --color-success-soft: #7f9a52;
+  --color-warning: #c08a3c;
+  --color-danger: #c0613f;
+  --color-danger-hover: #b15334;
+  --color-on-accent: #43382c;
+  --color-on-dark: #fef9e1;
+  --color-overlay: rgba(67, 56, 44, 0.88);
+  --color-shadow: #3a2f24;
+  --color-chart-0: #d3a373;
+  --color-chart-1: #7f8a4f;
+  --color-chart-2: #a9764a;
+  --color-chart-3: #6f8f4f;
+  --color-chart-4: #c0613f;
+  --color-chart-5: #8a6f47;
+  --color-avatar-0: #a9764a;
+  --color-avatar-1: #7f8a4f;
+  --color-avatar-2: #8a6f47;
+  --color-avatar-3: #c0613f;
+  --color-avatar-4: #6f8f4f;
+  --color-avatar-5: #9c7b4a;
+  --color-avatar-6: #5e7a53;
+  --color-avatar-7: #b5803f;
+}
+
 html,
 body,
 #root {
   height: 100%;
-  /* Use the dynamic viewport so mobile browser chrome doesn't clip content. */
   min-height: 100dvh;
-  /* Kill rubber-band / pull-to-refresh / bounce overscroll everywhere. */
-  overscroll-behavior: none;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 body {
   margin: 0;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
-  /* Prevent the whole page from rubber-banding / pull-to-refresh on mobile. */
   overflow-x: hidden;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
-}
-
-/* Nested scroll areas shouldn't chain their overscroll to the page. */
-* {
-  overscroll-behavior: none;
 }
 
 /* Respect notches / home indicator on iOS and Android. */
@@ -49,4 +81,92 @@ button {
 input,
 textarea {
   font-size: 16px;
+}
+
+/* Semantic theme utilities — use these so the whole app follows theme.js. */
+@layer utilities {
+  .bg-page {
+    background-color: var(--color-bg);
+  }
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+  .bg-surface-muted {
+    background-color: var(--color-surface-muted);
+  }
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+  .bg-overlay {
+    background-color: var(--color-overlay);
+  }
+  .text-primary {
+    color: var(--color-text);
+  }
+  .text-soft {
+    color: var(--color-text-soft);
+  }
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-faint {
+    color: var(--color-text-faint);
+  }
+  .text-accent {
+    color: var(--color-accent-text);
+  }
+  .text-on-dark {
+    color: var(--color-on-dark);
+  }
+  .text-on-accent {
+    color: var(--color-on-accent);
+  }
+  .text-success {
+    color: var(--color-success);
+  }
+  .text-warning {
+    color: var(--color-warning);
+  }
+  .bg-success {
+    background-color: var(--color-success);
+  }
+  .bg-accent-muted {
+    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+  .bg-success-muted {
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+  }
+  .bg-success-strong {
+    background-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+  }
+  .bg-warning-muted {
+    background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
+  }
+  .bg-surface-translucent {
+    background-color: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  }
+  .ring-border {
+    --tw-ring-color: var(--color-border);
+  }
+  .ring-accent-muted {
+    --tw-ring-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  }
+  .ring-accent-strong {
+    --tw-ring-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  .ring-success-muted {
+    --tw-ring-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+  }
+  .ring-success {
+    --tw-ring-color: var(--color-success);
+  }
+  .ring-warning-muted {
+    --tw-ring-color: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  }
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  .shadow-theme {
+    --tw-shadow-color: color-mix(in srgb, var(--color-shadow) 25%, transparent);
+  }
 }

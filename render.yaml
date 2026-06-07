@@ -1,0 +1,19 @@
+# Render Blueprint — Sympathie Go backend (WebSocket + uploads).
+# Deploy: Render Dashboard → New → Blueprint → connect this repo.
+# Pair with the Vercel frontend using VITE_WS_BASE / VITE_HTTP_BASE.
+
+services:
+  - type: web
+    name: sympathie-api
+    runtime: go
+    rootDir: server
+    buildCommand: go build -o ./sympathie .
+    startCommand: ./sympathie
+    healthCheckPath: /healthz
+    plan: free
+    envVars:
+      # Comma-separated frontend origins (your Vercel production URL).
+      # Example: https://sympathie.vercel.app
+      # Use * to allow any origin (not recommended for production).
+      - key: ALLOWED_ORIGINS
+        sync: false
