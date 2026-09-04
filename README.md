@@ -7,6 +7,9 @@ them. Everyone else, on their own phones, **guesses the ranker's order**. You
 score one point per position you guessed correctly. The ranker rotates every
 round, so everyone gets a turn. Guess your friends — be *kindred*.
 
+<img width="784" height="2816" alt="image" src="https://github.com/user-attachments/assets/92fddead-7c85-42c6-82ed-48a4dee15b21" />
+
+
 ```
 phases:  lobby → prompt → ranking → reveal → (prompt | gameOver)
 ```
