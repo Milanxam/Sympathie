@@ -15,12 +15,12 @@ round, so everyone gets a turn. Guess your friends — be *kindred*.
   />
   &nbsp;&nbsp;
   <img
-    src="https://github.com/user-attachments/assets/92fddead-7c85-42c6-82ed-48a4dee15b21"
+    src="https://github.com/user-attachments/assets/a9a36489-343e-4931-98eb-b6de28504be61"
     alt="App screenshot 2"
     height="500"
   />
-</p>
-
+</p
+  
 ```
 phases:  lobby → prompt → ranking → reveal → (prompt | gameOver)
 ```
