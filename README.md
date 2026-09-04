@@ -1,4 +1,4 @@
-# Kindred
+# Sympathie
 
 A real-time, multiplayer party game about how well you know each other. Players
 join a shared room from their phones with a 4-digit code. Each round one player
